@@ -1,5 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:r7_first_app/presentation/screens/home_screen.dart';
 import 'package:r7_first_app/presentation/screens/sign_up_screen.dart';
 
 class SignInScreen extends StatelessWidget{
@@ -93,7 +93,9 @@ class SignInScreen extends StatelessWidget{
               ),
               InkWell(
                 onTap: (){
-
+                  Navigator.pushAndRemoveUntil(context,
+                      MaterialPageRoute(builder: (c)=>HomeScreen())
+                      , (route) => false);
                 },
                 child: Container(
                   height: 44,
