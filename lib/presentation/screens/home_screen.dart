@@ -14,10 +14,10 @@ final List<String> categoriesNames = [
       backgroundColor: Color(0xFF171717),
       appBar: AppBar(
         backgroundColor: Color(0xffA71E27),
-        leading: InkWell(
-          onTap: (){},
-          child: Icon(Icons.menu,color: Colors.white,size: 32,),
-        ),
+        // leading: InkWell(
+        //   onTap: (){},
+        //   child: Icon(Icons.menu,color: Colors.white,size: 32,),
+        // ),
         title: Text("24 EXPRESS",
           style: TextStyle(
             color: Colors.white,
@@ -106,6 +106,133 @@ final List<String> categoriesNames = [
           ),
         ],
       ),
+      drawer: Drawer(
+        backgroundColor:Color(0xFF171717),
+        child: Column(
+          children: [
+            Container(
+              height: 148,
+              color: Color(0xffA71E27),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(
+                vertical: 16,
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.home,
+                        color: Colors.white,
+                        size: 28,
+                      ),
+                      SizedBox(width: 16,),
+                      Text("Home",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )
+                    ],
+                  ),
+                  SizedBox(height: 24,),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.home,
+                        color: Colors.white,
+                        size: 28,
+                      ),
+                      SizedBox(width: 16,),
+                      Text("Home",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )
+                    ],
+                  ),
+                  SizedBox(height: 24,),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.home,
+                        color: Colors.white,
+                        size: 28,
+                      ),
+                      SizedBox(width: 16,),
+                      Text("Home",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )
+                    ],
+                  ),
+                  SizedBox(height: 24,),
+                  ListTile(
+                    onTap: (){},
+                    leading:Icon(
+                      Icons.logout,
+                      color: Colors.white,
+                      size: 28,
+                    ),
+                    title: Text("Sign out",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(14),
+            topRight: Radius.circular(14),
+          )
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(14),
+            topRight: Radius.circular(14),
+          ),
+          child: BottomNavigationBar(
+            currentIndex: 1,
+            items: [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home),
+                label: "Home",
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.category),
+                label: "Categories",
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.favorite_border),
+                label: "Favourites",
+              ),
+            ],
+
+          ),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {  },
+        child: Icon(Icons.add),
+      ),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }
