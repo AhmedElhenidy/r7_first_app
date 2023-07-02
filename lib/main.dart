@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:r7_first_app/presentation/screens/home_screen.dart';
 import 'package:r7_first_app/presentation/screens/sign_in_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main(){
+bool isLoggedIn = false;
+void main()async{
+  WidgetsFlutterBinding.ensureInitialized();
+  final pref = await SharedPreferences.getInstance();
+  var token =  pref.getString('token');
+  print("token is $token");
+  isLoggedIn = token==null?false:true;
   runApp(MyApp());
 }
 class MyApp extends StatelessWidget {
@@ -18,7 +26,11 @@ class MyApp extends StatelessWidget {
         // scaffoldBackgroundColor: Colors.pink,
 
       ),
-      home: SignInScreen(),
+      home: isLoggedIn
+          ?
+          HomeScreen()
+          :
+      SignInScreen(),
     );
   }
 }
