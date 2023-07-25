@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:r7_first_app/presentation/screens/home_screen.dart';
 import 'package:r7_first_app/presentation/screens/sign_in_screen.dart';
@@ -10,6 +11,8 @@ void main()async{
   var token =  pref.getString('token');
   print("token is $token");
   isLoggedIn = token==null?false:true;
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 class MyApp extends StatelessWidget {
