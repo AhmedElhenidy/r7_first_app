@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:r7_first_app/presentation/screens/sign_in_screen.dart';
@@ -180,30 +181,13 @@ final List<String> categoriesNames = [
                   SizedBox(height: 24,),
                   ListTile(
                     onTap: ()async{
-                      final uri = Uri.parse('https://v-mesta.com/api/sign-out');
-                      //prepare request
-                      final request = http.Request('DELETE',uri);
-                      final pref = await SharedPreferences.getInstance();
-                      final cachedToken = pref.getString('token');
-                      request.headers.addAll({
-                        "Content-Type": "application/json",
-                        "Authorization":"Bearer $cachedToken"
-                      });
-                     final response = await request.send();
-                     if(response.statusCode==200){
-                       final String responseBody= await response.stream.bytesToString();
-                       final decodedResponseBody = json.decode(responseBody);
-                       print(decodedResponseBody);
-                       if(decodedResponseBody['key']=="success"){
-                         pref.clear();
-                         Navigator.pushAndRemoveUntil(
-                           context, MaterialPageRoute(
-                           builder: (builder)=>SignInScreen(),
-                         ),
-                               (route) => false,
-                         );
-                       }
-                     }
+                      await FirebaseAuth.instance.signOut();
+                      Navigator.pushAndRemoveUntil(
+                        context, MaterialPageRoute(
+                        builder: (builder)=>SignInScreen(),
+                      ),
+                            (route) => false,
+                      );
                     },
                     leading:Icon(
                       Icons.logout,

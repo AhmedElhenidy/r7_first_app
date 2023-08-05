@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:r7_first_app/presentation/screens/home_screen.dart';
 import 'package:r7_first_app/presentation/screens/sign_up_screen.dart';
+import 'package:r7_first_app/services/firebase_authentication_srevice.dart';
 
 class SignInScreen extends StatefulWidget{
 
@@ -9,28 +10,10 @@ class SignInScreen extends StatefulWidget{
 }
 
 class _SignInScreenState extends State<SignInScreen>{
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    if(mounted){
-      isSecure= false;
-      setState(() {
-
-      });
-    }
-  }
-  @override
-  void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
-    super.didChangeDependencies();
-  }
-  @override
-  void didUpdateWidget(covariant SignInScreen oldWidget) {
-    // TODO: implement didUpdateWidget
-    super.didUpdateWidget(oldWidget);
-  }
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
   bool isSecure = true;
+  String? errorMessage;
   @override
   Widget build(BuildContext context){
     print("widget function is called again");
@@ -51,9 +34,19 @@ class _SignInScreenState extends State<SignInScreen>{
               const SizedBox(
                 height: 32,
               ),
+              errorMessage==null?
+            SizedBox():
+              Text(errorMessage!,
+                style: TextStyle(
+                  color: Colors.red,
+                  fontSize: 22,
+                ),
+              ),
+              SizedBox(height: 12,),
               SizedBox(
                 height: 64,
                 child: TextField(
+                  controller: _emailController,
                   cursorColor: Colors.black,
                   decoration: InputDecoration(
                       border: OutlineInputBorder(
@@ -77,6 +70,7 @@ class _SignInScreenState extends State<SignInScreen>{
               SizedBox(
                 height: 64,
                 child: TextField(
+                  controller: _passwordController,
                   obscureText: isSecure,
                   cursorColor: Colors.black,
                   decoration: InputDecoration(
@@ -137,10 +131,27 @@ class _SignInScreenState extends State<SignInScreen>{
                 height: 13,
               ),
               InkWell(
-                onTap: (){
-                  Navigator.pushAndRemoveUntil(context,
-                      MaterialPageRoute(builder: (c)=>HomeScreen())
-                      , (route) => false);
+                onTap: ()async{
+                    FirebaseAuthenticationService
+                        .signIn(
+                      email: _emailController.text,
+                      password: _passwordController.text,
+                    ).then(
+                          (credential){
+                            print("cred. ${credential.user?.uid}");
+                          },
+                      onError: (err){
+                            errorMessage  =err.toString();
+                            setState(() {
+
+                            });
+                            print("error ${err.toString()}");
+                      },
+                    );
+
+                  // Navigator.pushAndRemoveUntil(context,
+                  //     MaterialPageRoute(builder: (c)=>HomeScreen())
+                  //     , (route) => false);
                 },
                 child: Container(
                   height: 44,
