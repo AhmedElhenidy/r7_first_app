@@ -129,6 +129,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     signUp(
                       email: _emailController.text,
                       password: _passwordController.text,
+                      phone: _phoneController.text,
+                      name: _nameController.text,
                     ).then(
                             (credential){
                               print("the  returned user data"

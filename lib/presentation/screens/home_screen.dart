@@ -1,11 +1,15 @@
-import 'dart:convert';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:r7_first_app/presentation/screens/sign_in_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-class HomeScreen extends StatelessWidget{
+
+import '../../models/user_model.dart';
+class HomeScreen extends StatefulWidget{
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
 final List<String> categoriesNames = [
   "Milk",
   "Vegatables",
@@ -13,6 +17,23 @@ final List<String> categoriesNames = [
   "Sea Food",
   "Eggs",
 ];
+final userModel=UserModel();
+@override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    FirebaseFirestore.instance.collection("users").
+    doc(FirebaseAuth.instance.currentUser?.uid).get().then(
+          (value) {
+            userModel.name=value.data()?['name'];
+            userModel.mail=value.data()?['mail'];
+            userModel.phone=value.data()?['phone'];
+            userModel.id=value.data()?['id'];
+            userModel.image=value.data()?['image'];
+            print("the returned value is \n${value.data()}");
+          },
+    );
+  }
   @override
   Widget build(BuildContext context){
     return Scaffold(
@@ -116,8 +137,63 @@ final List<String> categoriesNames = [
         child: Column(
           children: [
             Container(
-              height: 148,
+              height: 240,
               color: Color(0xffA71E27),
+              padding: EdgeInsets.symmetric(
+                vertical: 32,
+                horizontal: 16,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Center(
+                    child: CircleAvatar(
+                      radius: 32,
+                      child: Icon(Icons.person),
+                    ),
+                  ),
+                  SizedBox(height: 12,),
+                  Row(
+                    children: [
+                      Text(userModel.name??"",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Spacer(),
+                      InkWell(
+                        onTap: (){
+                          FirebaseFirestore.instance.
+                          collection("users").
+                          doc(FirebaseAuth.instance.currentUser?.uid)
+                              .update({
+                            "phone":"01010301140"
+                          }).then((value) => setState((){}));
+                        },
+                        child: Icon(
+                          Icons.edit,color: Colors.white,
+                          size: 18,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Text(userModel.phone??"",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                    ),
+                  ),
+                  Text(userModel.mail??"",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
+              ),
             ),
             Padding(
               padding: EdgeInsets.symmetric(
@@ -181,13 +257,20 @@ final List<String> categoriesNames = [
                   SizedBox(height: 24,),
                   ListTile(
                     onTap: ()async{
-                      await FirebaseAuth.instance.signOut();
-                      Navigator.pushAndRemoveUntil(
-                        context, MaterialPageRoute(
-                        builder: (builder)=>SignInScreen(),
-                      ),
-                            (route) => false,
-                      );
+                      final uid = FirebaseAuth.instance.currentUser?.uid;
+                      FirebaseAuth.instance.signOut().then((value){
+                        FirebaseFirestore.instance.collection("users").doc(uid).delete().
+                        then((value){
+                          Navigator.pushAndRemoveUntil(
+                            context, MaterialPageRoute(
+                            builder: (builder)=>SignInScreen(),
+                          ),
+                                (route) => false,
+                          );
+                        },
+                        );
+                      });
+
                     },
                     leading:Icon(
                       Icons.logout,
