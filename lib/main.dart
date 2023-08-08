@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:r7_first_app/presentation/hassan/screens/home_screen.dart';
+import 'package:r7_first_app/presentation/hassan/screens/sign_in.dart';
 import 'package:r7_first_app/presentation/screens/home_screen.dart';
 import 'package:r7_first_app/presentation/screens/sign_in_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -30,7 +32,7 @@ class MyApp extends StatelessWidget {
           ?
           HomeScreen()
           :
-      SignInScreen(),
+      SignIn(),
     );
   }
 }
