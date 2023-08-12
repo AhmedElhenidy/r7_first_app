@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:r7_first_app/presentation/hassan/screens/product_screen.dart';
+import 'package:r7_first_app/presentation/hassan/screens/product_details_screen.dart';
 
 class CategoryProductsScreen extends StatefulWidget {
   final String categoryName;

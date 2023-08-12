@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import '../widgets/appbar.dart';
 import 'category_products.dart';
 
 class Categories extends StatefulWidget {
@@ -15,22 +16,8 @@ class _CategoriesState extends State<Categories> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xff171717),
-      appBar: AppBar(
-        iconTheme: const IconThemeData(color: Colors.white),
-        backgroundColor: const Color(0xffA71E27),
-        title: const Text("Categories",style: TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-          fontSize: 20,
-        ),),
-        actions: [
-          IconButton(icon: const Icon(Icons.search), onPressed: (){
-            // showSearch(context: context, delegate: Search());
-          }),
-          const SizedBox(width: 16,),
-          const Icon(Icons.shopping_cart_outlined,color: Colors.white,size: 32,),
-          const SizedBox(width: 8,)
-        ],
+      appBar: const CustomAppBarWidget(
+        title: "Categories",
       ),
       body: FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
         future: FirebaseFirestore.instance

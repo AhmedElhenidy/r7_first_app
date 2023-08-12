@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:r7_first_app/presentation/hassan/screens/category_products.dart';
+import 'package:r7_first_app/presentation/hassan/screens/product_details_screen.dart';
 import '../../../models/user_model.dart';
+import '../widgets/appbar.dart';
 import 'categories.dart';
 import 'drawer_screen.dart';
 class HomeScreen extends StatefulWidget{
@@ -14,20 +17,6 @@ class HomeScreen extends StatefulWidget{
 
 class _HomeScreenState extends State<HomeScreen> {
   int current = 0;
-
-  List <String> offers = ["https://www.gitsfood.com/wp-content/uploads/2021/11/Complete-Snackmix-Combo-600x600.jpg",
-    "https://www.gitsfood.com/wp-content/uploads/2021/11/Complete-Snackmix-Combo-600x600.jpg"];
-
-  List <String> popularProductsImage =[
-    "https://www.thecookierookie.com/wp-content/uploads/2023/04/stovetop-burgers-recipe-2-960x1200.jpg",
-    "https://www.thecookierookie.com/wp-content/uploads/2023/04/stovetop-burgers-recipe-2-960x1200.jpg",
-    "https://www.thecookierookie.com/wp-content/uploads/2023/04/stovetop-burgers-recipe-2-960x1200.jpg",
-    "https://www.thecookierookie.com/wp-content/uploads/2023/04/stovetop-burgers-recipe-2-960x1200.jpg",
-    "https://www.thecookierookie.com/wp-content/uploads/2023/04/stovetop-burgers-recipe-2-960x1200.jpg",
-    "https://www.thecookierookie.com/wp-content/uploads/2023/04/stovetop-burgers-recipe-2-960x1200.jpg",
-    "https://www.thecookierookie.com/wp-content/uploads/2023/04/stovetop-burgers-recipe-2-960x1200.jpg",
-    "https://www.thecookierookie.com/wp-content/uploads/2023/04/stovetop-burgers-recipe-2-960x1200.jpg",
-  ];
 
   final userModel = UserModel();
 
@@ -49,22 +38,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xff171717),
-      appBar: AppBar(
-        iconTheme: const IconThemeData(color: Colors.white),
-        backgroundColor: const Color(0xffA71E27),
-        title: const Text("24 Express",style: TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-          fontSize: 20,
-        ),),
-        actions: [
-           IconButton(icon: const Icon(Icons.search), onPressed: (){
-             // showSearch(context: context, delegate: Search());
-           }),
-          const SizedBox(width: 16,),
-          const Icon(Icons.shopping_cart_outlined,color: Colors.white,size: 32,),
-          const SizedBox(width: 8,)
-        ],
+      appBar: const CustomAppBarWidget(
+        title: "24 Express",
       ),
       drawerScrimColor: Colors.transparent.withOpacity(0.75),
       drawer: DrawerScreen(userModel: userModel,),
@@ -112,7 +87,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 case ConnectionState.done:
                   return Column(
                     children: [
-                      Padding(padding: const EdgeInsets.all(16),
+                      Padding(
+                        padding: const EdgeInsets.all(16),
                         child: Row(
                           children: [
                             const Icon(Icons.category,color: Colors.white,size: 24,),
@@ -146,7 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                       SizedBox(
-                        height: 150,
+                        height: 100,
                         child: ListView.builder(
                           physics: const BouncingScrollPhysics(),
                           padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -155,18 +131,28 @@ class _HomeScreenState extends State<HomeScreen> {
                           itemBuilder: (context, index) {
                             return Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 16),
-                              child: Column(
-                                children: [
-                                  CircleAvatar(
-                                    radius: 32,
-                                    backgroundImage: NetworkImage(
-                                      snapShot.data?.docs[index]['image']??"",
-                                    ),
+                              child: InkWell(
+                                onTap: (){
+                                  Navigator.push(context,
+                                      MaterialPageRoute(builder: (c)=>CategoryProductsScreen(
+                                        categoryId:snapShot.data?.docs[index]['id'],
+                                        categoryName: snapShot.data?.docs[index]['name'],
 
-                                  ),
-                                  const SizedBox(height: 10,),
-                                  Text(snapShot.data?.docs[index]['name'],style: const TextStyle(color: Color(0xffC4C4C4),fontSize: 15,fontWeight: FontWeight.bold),)
-                                ],
+                                    )));
+                                },
+                                child: Column(
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 32,
+                                      backgroundImage: NetworkImage(
+                                        snapShot.data?.docs[index]['image']??"",
+                                      ),
+
+                                    ),
+                                    const SizedBox(height: 10,),
+                                    Text(snapShot.data?.docs[index]['name'],style: const TextStyle(color: Color(0xffC4C4C4),fontSize: 15,fontWeight: FontWeight.bold),)
+                                  ],
+                                ),
                               ),
                             );
                           },
@@ -174,11 +160,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ],
                   );
-                  break;
               }
             },
           ),
-
           Padding(padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 8),
           child: Row(
             children: const [
@@ -188,33 +172,56 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
           ),
-          SizedBox(height: 160,
-            child: ListView.builder(
-              physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              scrollDirection: Axis.horizontal,
-              itemCount: offers.length,
-              itemBuilder: (context, index) {
+          FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
+           future: FirebaseFirestore.instance.collection("products").where('has_offer',isEqualTo: true).get(),
+              builder: (context, snapshot) {
+             switch (snapshot.connectionState){
+               case ConnectionState.none:
+                 return Text("none");
+               case ConnectionState.waiting:
+                 return Center(
+                   child: CircularProgressIndicator(),
+                 );
+               case ConnectionState.active:
+                 return Center(
+                   child: CircularProgressIndicator(),
+                 );
+               case ConnectionState.done:
+               return  SizedBox(
+                 height: 160,
+                 child: ListView.builder(
+                   physics: const BouncingScrollPhysics(),
+                   padding: const EdgeInsets.symmetric(horizontal: 8),
+                   scrollDirection: Axis.horizontal,
+                   itemCount: snapshot.data?.docs.length,
+                   itemBuilder: (context, index) {
+                     return Padding(
+                       padding: const EdgeInsets.symmetric(horizontal: 16),
+                       child: InkWell(
+                         onTap: (){
+                           Navigator.push(context,
+                           MaterialPageRoute(builder: (c)=>ProductDetailsScreen("", snapshot.data!.docs[index])));
+                         },
+                         child: Container(
 
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Container(
-
-                    width: 290,
-                    height: 148,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: NetworkImage(offers[index]),
-                        fit: BoxFit.cover,
-                      ),
-                      color: Colors.red,
-                      borderRadius: BorderRadius.circular(20)
-                    ),
-                  ),
-                );
-              },
-
-            ),
+                           width: 290,
+                           height: 148,
+                           decoration: BoxDecoration(
+                               image: DecorationImage(
+                                 image: NetworkImage(snapshot.data?.docs[index]['image']),
+                                 fit: BoxFit.cover,
+                               ),
+                               color: Colors.red,
+                               borderRadius: BorderRadius.circular(20)
+                           ),
+                         ),
+                       ),
+                     );
+                   },
+                 ),
+               );
+             }
+              }
           ),
           Padding(padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 8),
             child: Row(
@@ -225,31 +232,57 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
           ),
-          Container(
-              child: GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                  itemCount: popularProductsImage.length,
-                  scrollDirection: Axis.vertical,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3,),
-                  itemBuilder: (context,index){
-                return Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 16,vertical: 20),
-                child: Container(
+          FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
+              future: FirebaseFirestore.instance.collection("products").where('cart_count', isGreaterThan: 10).get(),
+              builder: (context, snapshot) {
+                switch (snapshot.connectionState){
+                  case ConnectionState.none:
+                    return Text("none");
+                  case ConnectionState.waiting:
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  case ConnectionState.active:
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  case ConnectionState.done:
+                    return  SizedBox(
+                      height: 160,
+                      child: ListView.builder(
+                        physics: const BouncingScrollPhysics(),
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        scrollDirection: Axis.horizontal,
+                        itemCount: snapshot.data?.docs.length,
+                        itemBuilder: (context, index) {
 
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: NetworkImage(popularProductsImage[index]),
-                      fit: BoxFit.cover
-                    ),
-
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-                );
-                  }),
-            ),
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: InkWell(
+                              onTap: (){
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (c)=>ProductDetailsScreen("", snapshot.data!.docs[index])));
+                              },
+                              child: Container(
+                                width: 290,
+                                height: 148,
+                                decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      image: NetworkImage(snapshot.data?.docs[index]['image']),
+                                      fit: BoxFit.cover,
+                                    ),
+                                    color: Colors.red,
+                                    borderRadius: BorderRadius.circular(20)
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                }
+              }
+          ),
         ],
       ),
     );

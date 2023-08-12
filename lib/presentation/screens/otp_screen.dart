@@ -98,10 +98,10 @@ class _OtpScreenState extends State<OtpScreen> {
                         await prefs.setString('token',
                           decodedBody['data']['user']['token'],
                         );
-                        Navigator.pushAndRemoveUntil(context,
-                            MaterialPageRoute(
-                                builder: (builder)=>HomeScreen(),
-                            ), (route)=>false,);
+                        // Navigator.pushAndRemoveUntil(context,
+                        //     MaterialPageRoute(
+                        //         builder: (builder)=>HomeScreen(),
+                        //     ), (route)=>false,);
                         // handle error stat
                       } else if(decodedBody['key']=="fail"){
                         showDialog(
