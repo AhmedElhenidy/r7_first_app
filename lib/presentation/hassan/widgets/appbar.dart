@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:badges/badges.dart' as badges;
+import 'package:r7_first_app/presentation/hassan/screens/user_cart_screen.dart';
 class CustomAppBarWidget extends StatelessWidget implements PreferredSizeWidget {
   final String? title;
   const CustomAppBarWidget({this.title,super.key});
@@ -38,7 +39,7 @@ class CustomAppBarWidget extends StatelessWidget implements PreferredSizeWidget 
                   break;
                 case ConnectionState.active:
                   return Text('${snapshot.data?.docs.length??0}',
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.white,
                     ),
                   );
@@ -46,17 +47,22 @@ class CustomAppBarWidget extends StatelessWidget implements PreferredSizeWidget 
                   // TODO: Handle this case.
                   break;
               }
-              return SizedBox();
+              return const SizedBox();
             }
           ),
           position: badges.BadgePosition.custom(
             top: 0,
             end: 0
           ),
-          child:Center(
-            child: Icon(
-              Icons.shopping_cart_outlined,
-              color: Colors.white,size: 32,
+          child:InkWell(
+            onTap: (){
+              Navigator.push(context, MaterialPageRoute(builder: (c)=>const UserCart()));
+            },
+            child: const Center(
+              child: Icon(
+                Icons.shopping_cart_outlined,
+                color: Colors.white,size: 32,
+              ),
             ),
           ),
         ),
@@ -66,5 +72,5 @@ class CustomAppBarWidget extends StatelessWidget implements PreferredSizeWidget 
   }
 
   @override
-  Size get preferredSize => Size(360, 56);
+  Size get preferredSize => const Size(360, 56);
 }

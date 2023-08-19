@@ -4,7 +4,8 @@ import '../widgets/appbar.dart';
 import 'category_products.dart';
 
 class Categories extends StatefulWidget {
-  const Categories({Key? key}) : super(key: key);
+  final bool showAppBar;
+  const Categories({this.showAppBar=true,Key? key}) : super(key: key);
 
   @override
   State<Categories> createState() => _CategoriesState();
@@ -16,9 +17,9 @@ class _CategoriesState extends State<Categories> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xff171717),
-      appBar: const CustomAppBarWidget(
+      appBar: widget.showAppBar?const CustomAppBarWidget(
         title: "Categories",
-      ),
+      ):null,
       body: FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
         future: FirebaseFirestore.instance
             .collection("categories").get(),
